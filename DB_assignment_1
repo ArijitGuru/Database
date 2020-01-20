@@ -1,0 +1,133 @@
+CREATE SCHEMA IF NOT EXISTS socialmedia;
+USE socialmedia;
+
+DROP TABLE IF EXISTS User;
+
+/*Table Structure for Table 'User' */
+CREATE TABLE User (
+`UserId` int(10) NOT NULL,
+`FName` varchar(50) NOT NULL,
+`LName` varchar(50) NOT NULL,
+`UserName` varchar(50) NOT NULL,
+`Password` varchar(50) NOT NULL,
+`LocationId` int(50) NOT NULL,
+`ExternalAccountId` int(10) NOT NULL,
+`Status` varchar(50) NOT NULL,
+PRIMARY KEY (`UserId`),
+CONSTRAINT `User_Location_fk` FOREIGN KEY (`LocationId`) REFERENCES `Location` (`LocationId`),
+CONSTRAINT `User_ExternalAccount_fk` FOREIGN KEY (`ExternalAccountId`) REFERENCES `ExternalAccount` (`ExternalAccountId`)
+);
+
+DROP TABLE IF EXISTS Location;
+/*Table Structure for Table 'Location' */
+CREATE TABLE Location (
+`LocationId` int(10) NOT NULL,
+`StreetAddress_1` varchar(50) NOT NULL,
+`StreetAddress_2` varchar(50) NOT NULL,
+`City` varchar(50) NOT NULL,
+`State` varchar(50) NOT NULL,
+`ZipCode` int(5) NOT NULL,
+PRIMARY KEY (`LocationId`)
+);
+
+DROP TABLE IF EXISTS ExternalAccount;
+/*Table Structure for Table 'ExternalAccount' */
+CREATE TABLE ExternalAccount (
+`ExternalAccountId` int(10) NOT NULL,
+`AccountName` varchar(50) NOT NULL,
+`Url` varchar(50) NOT NULL,
+PRIMARY KEY (`ExternalAccountId`)
+);
+
+DROP TABLE IF EXISTS Post;
+/*Table Structure for Table 'Post' */
+CREATE TABLE Post (
+`PostId` int(10) NOT NULL,
+`PostText` varchar(250) NOT NULL,
+`Category` varchar(50) NOT NULL,
+`OwnerId` int(50) NOT NULL,
+`PostDate` datetime(6) NOT NULL,
+PRIMARY KEY (`PostId`),
+CONSTRAINT `Post_User_fk` FOREIGN KEY (`OwnerId`) REFERENCES `User` (`UserId`)
+);
+
+DROP TABLE IF EXISTS Favorite;
+/*Table Structure for Table 'Favorite' */
+CREATE TABLE Favorite (
+`FavoriteId` int(10) NOT NULL,
+`PostId` int(50) NOT NULL,
+`UserId` int(50) NOT NULL,
+PRIMARY KEY (`FavoriteId`),
+CONSTRAINT `Favorite_User_fk` FOREIGN KEY (`UserId`) REFERENCES `User` (`UserId`),
+CONSTRAINT `Favorite_Post_fk` FOREIGN KEY (`PostId`) REFERENCES `Post` (`PostId`)
+);
+
+DROP TABLE IF EXISTS Favorite;
+/*Table Structure for Table 'Favorite' */
+CREATE TABLE Favorite (
+`FavoriteId` int(10) NOT NULL,
+`PostId` int(50) NOT NULL,
+`UserId` int(50) NOT NULL,
+PRIMARY KEY (`FavoriteId`),
+CONSTRAINT `Favorite_User_fk` FOREIGN KEY (`UserId`) REFERENCES `User` (`UserId`),
+CONSTRAINT `Favorite_Post_fk` FOREIGN KEY (`PostId`) REFERENCES `Post` (`PostId`)
+);
+
+DROP TABLE IF EXISTS Follower;
+/*Table Structure for Table 'Follower' */
+CREATE TABLE Follower (
+`UserId` int(50) NOT NULL,
+`FollowerId` int(10) NOT NULL,
+`SendNotification` varchar(50) NOT NULL,
+PRIMARY KEY (`UserId`),
+CONSTRAINT `Follower_User_fk` FOREIGN KEY (`UserId`) REFERENCES `User` (`UserId`)
+);
+
+DROP TABLE IF EXISTS Comment;
+/*Table Structure for Table 'Comment' */
+CREATE TABLE Comment (
+`CommentId` int(50) NOT NULL,
+`PostId` int(10) NOT NULL,
+`CommentBy` int(10) NOT NULL,
+`Comment` int(10) NOT NULL,
+`Date` datetime(6) NOT NULL,
+PRIMARY KEY (`CommentId`),
+CONSTRAINT `Comment_User_fk` FOREIGN KEY (`CommentBy`) REFERENCES `User` (`UserId`),
+CONSTRAINT `Comment_Post_fk` FOREIGN KEY (`PostId`) REFERENCES `Post` (`PostId`)
+);
+
+DROP TABLE IF EXISTS Following;
+/*Table Structure for Table 'Following' */
+CREATE TABLE Following (
+`UserId` int(50) NOT NULL,
+`FollowingId` int(10) NOT NULL,
+`GetNotification` varchar(50) NOT NULL,
+PRIMARY KEY (`UserId`),
+CONSTRAINT `Following_User_fk` FOREIGN KEY (`UserId`) REFERENCES `User` (`UserId`)
+);
+
+DROP TABLE IF EXISTS Status;
+/*Table Structure for Table 'Status' */
+CREATE TABLE Status (
+`StatusId` int(50) NOT NULL,
+`StartDate` datetime(6) NOT NULL,
+`EndDate` datetime(6) NOT NULL,
+`UserId` int(10) NOT NULL,
+PRIMARY KEY (`StatusId`),
+CONSTRAINT `Status_User_fk` FOREIGN KEY (`UserId`) REFERENCES `User` (`UserId`)
+);
+
+DROP TABLE IF EXISTS Notification;
+/*Table Structure for Table 'Notification' */
+CREATE TABLE Notification (
+`NotificationId` int(10) NOT NULL,
+`FollowerId` int(10) NOT NULL,
+`CommentId` int(10) NOT NULL,
+`PostId` int(10) NOT NULL,
+`ReceiveNotification` boolean NOT NULL,
+PRIMARY KEY (`NotificationId`),
+CONSTRAINT `Notification_User_fk` FOREIGN KEY (`FollowerId`) REFERENCES `User` (`UserId`),
+CONSTRAINT `Notification_Comment_fk` FOREIGN KEY (`CommentId`) REFERENCES `Comment` (`CommentId`),
+CONSTRAINT `Notification_Post_fk` FOREIGN KEY (`PostId`) REFERENCES `Post` (`PostId`)
+);
+
